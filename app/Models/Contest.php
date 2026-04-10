@@ -67,6 +67,21 @@ class Contest extends Model
         return $this->contestants()->where('name', 'like', 'Ms %')->count();
     }
 
+    public function nextContestantNumber(?string $gender = null): int
+    {
+        if ($this->type === 'double') {
+            return $gender === 'female'
+                ? $this->femaleContestantCount() + 1
+                : $this->maleContestantCount() + 1;
+        }
+
+        if ($this->relationLoaded('contestants')) {
+            return ($this->contestants->max('number') ?? 0) + 1;
+        }
+
+        return ($this->contestants()->max('number') ?? 0) + 1;
+    }
+
     public function getTypeLabel(): string
     {
         if ($this->type === 'single') {

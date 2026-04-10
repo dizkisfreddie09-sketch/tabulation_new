@@ -18,6 +18,7 @@
         .navbar .judge-info .badge { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; }
 
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .container-full { max-width: none; width: 100%; padding-inline: clamp(1rem, 2.5vw, 2rem); }
 
         h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
         h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem; }
@@ -87,9 +88,56 @@
 
         .contestant-row { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
         .contestant-row:hover { border-color: #93c5fd; }
-        .contestant-name { font-weight: 600; font-size: 1rem; }
-        .contestant-number { background: #1e40af; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; margin-right: 0.75rem; }
+        .contestant-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
+        .contestant-column { min-width: 0; }
+        .contestant-column-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.9rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            color: #1e3a8a;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .contestant-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+        .contestant-identity { display: flex; align-items: center; gap: 1rem; min-width: 0; }
+        .contestant-name { font-weight: 600; font-size: clamp(1rem, 1.2vw + 0.85rem, 1.2rem); line-height: 1.2; }
+        .contestant-number {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: #fff;
+            width: clamp(3.5rem, 7vw, 5rem);
+            height: clamp(3.5rem, 7vw, 5rem);
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.3rem, 2.6vw, 2rem);
+            line-height: 1;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+        }
+        .contestant-score-summary { min-width: 110px; text-align: center; flex-shrink: 0; }
         .criteria-grid { display: grid; gap: 0.75rem; margin-top: 0.75rem; }
+
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            .container-full { padding-inline: 1rem; }
+            .contestant-columns { grid-template-columns: 1fr; }
+            .contestant-row { padding: 1rem; }
+            .contestant-header { align-items: flex-start; flex-direction: column; }
+            .contestant-identity { width: 100%; }
+            .contestant-score-summary {
+                width: 100%;
+                text-align: left;
+                padding-left: calc(clamp(3.5rem, 7vw, 5rem) + 1rem);
+            }
+            .score-input { width: 100%; }
+        }
     </style>
 </head>
 <body>

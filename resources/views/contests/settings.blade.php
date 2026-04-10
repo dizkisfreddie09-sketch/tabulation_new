@@ -331,11 +331,18 @@
             <form action="{{ route('contests.contestants.store', $contest) }}" method="POST" style="margin-top:1rem; padding-top:1rem; border-top:1px solid #e5e7eb">
                 @csrf
                 <div class="flex gap-2 flex-wrap items-center">
-                    <div class="form-control" style="width:70px; display:flex; align-items:center; justify-content:center; background:#f3f4f6; border:1px solid #d1d5db; border-radius:8px; color:#6b7280;">
-                        #{{ ($contest->contestants->max('number') ?? 0) + 1 }}
+                    <div
+                        id="next-contestant-number"
+                        class="form-control"
+                        data-next-single="{{ $contest->nextContestantNumber() }}"
+                        data-next-male="{{ $contest->nextContestantNumber('male') }}"
+                        data-next-female="{{ $contest->nextContestantNumber('female') }}"
+                        style="width:70px; display:flex; align-items:center; justify-content:center; background:#f3f4f6; border:1px solid #d1d5db; border-radius:8px; color:#6b7280;"
+                    >
+                        #{{ $contest->type === 'double' ? $contest->nextContestantNumber('male') : $contest->nextContestantNumber() }}
                     </div>
                     @if($contest->type === 'double')
-                        <select name="gender" class="form-control" style="width:140px">
+                        <select name="gender" id="contestant-gender" class="form-control" style="width:140px">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
@@ -355,6 +362,27 @@
 
 <script>
 (function() {
+    var nextContestantNumber = document.getElementById('next-contestant-number');
+    var contestantGender = document.getElementById('contestant-gender');
+
+    function updateNextContestantNumber() {
+        if (!nextContestantNumber) return;
+
+        if (!contestantGender) {
+            nextContestantNumber.textContent = '#' + nextContestantNumber.dataset.nextSingle;
+            return;
+        }
+
+        var gender = contestantGender.value === 'female' ? 'nextFemale' : 'nextMale';
+        nextContestantNumber.textContent = '#' + nextContestantNumber.dataset[gender];
+    }
+
+    if (contestantGender) {
+        contestantGender.addEventListener('change', updateNextContestantNumber);
+    }
+
+    updateNextContestantNumber();
+
     var perPage = 3;
     var items = document.querySelectorAll('.exposure-item');
     var total = items.length;

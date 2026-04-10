@@ -173,11 +173,11 @@ class ContestController extends Controller
             ]);
 
             $validated['contest_id'] = $contest->id;
-            $validated['number'] = ($contest->contestants()->max('number') ?? 0) + 1;
+            $validated['number'] = $contest->nextContestantNumber($validated['gender']);
 
             $validated['name'] = $validated['name'] ?? ($validated['gender'] === 'male'
-                ? 'Mr ' . ($contest->maleContestantCount() + 1)
-                : 'Ms ' . ($contest->femaleContestantCount() + 1));
+                ? 'Mr ' . $validated['number']
+                : 'Ms ' . $validated['number']);
 
             $validated['name2'] = null;
             $validated['team_name'] = null;
@@ -264,17 +264,15 @@ class ContestController extends Controller
     private function createContestantsUpTo(Contest $contest): void
     {
         $records = [];
-        $currentMaxNumber = $contest->contestants()->max('number') ?? 0;
 
         if ($contest->type === 'double') {
             $currentMale = $contest->maleContestantCount();
             $currentFemale = $contest->femaleContestantCount();
-            $nextNumber = $currentMaxNumber + 1;
 
             for ($i = $currentMale + 1; $i <= $contest->male_count; $i++) {
                 $records[] = [
                     'contest_id' => $contest->id,
-                    'number' => $nextNumber++,
+                    'number' => $i,
                     'name' => "Mr {$i}",
                     'name2' => null,
                     'team_name' => null,
@@ -286,7 +284,7 @@ class ContestController extends Controller
             for ($i = $currentFemale + 1; $i <= $contest->female_count; $i++) {
                 $records[] = [
                     'contest_id' => $contest->id,
-                    'number' => $nextNumber++,
+                    'number' => $i,
                     'name' => "Ms {$i}",
                     'name2' => null,
                     'team_name' => null,
@@ -295,6 +293,7 @@ class ContestController extends Controller
                 ];
             }
         } else {
+            $currentMaxNumber = $contest->contestants()->max('number') ?? 0;
             $currentNumber = $currentMaxNumber;
             $desiredCount = $contest->contestant_count;
 
